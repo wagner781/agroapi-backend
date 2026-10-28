@@ -3,7 +3,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pe.upeu.agrosierra.seguridad.*
-@Component
+@Component @org.springframework.core.annotation.Order(1)
 class SemillaUsuarios(private val usuarios: UsuarioRepository, private val encoder: BCryptPasswordEncoder) : CommandLineRunner {
     override fun run(vararg args: String) {
         listOf(Triple("tecnico1","Tecnico de campo",Rol.TECNICO),Triple("jefe1","Jefe de campo",Rol.JEFE_CAMPO),Triple("admin","Administrador",Rol.ADMINISTRADOR)).forEach { (login,nombre,rol) ->
