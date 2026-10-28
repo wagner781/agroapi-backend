@@ -1,0 +1,187 @@
+{
+  "info": {
+    "name": "AgroAPI - contrato y errores",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "laborId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "401 sin token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/lotes"
+      }
+    },
+    {
+      "name": "Login tecnico (guarda token)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"usuario\": \"tecnico1\", \"password\": \"Agro2026*\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"200\", () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuario actual",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/usuarios/me"
+      }
+    },
+    {
+      "name": "Lotes paginados",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/lotes?pagina=0&tamanio=3"
+      }
+    },
+    {
+      "name": "Labores lote 2",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/lotes/2/labores"
+      }
+    },
+    {
+      "name": "403 tecnico no cierra",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/lotes/2/cerrar-campania"
+      }
+    },
+    {
+      "name": "400 dosis maxima",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/labores",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"loteId\": 2, \"tipo\": \"FUMIGACION\", \"fecha\": \"2026-10-28\", \"responsable\": \"Prueba Postman\", \"cantidad\": 999, \"observacion\": \"Demostracion\"}"
+        }
+      }
+    },
+    {
+      "name": "Crear labor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/labores",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"loteId\": 2, \"tipo\": \"RIEGO\", \"fecha\": \"2026-10-28\", \"responsable\": \"Prueba Postman\", \"cantidad\": 2, \"observacion\": \"Demostracion\"}"
+        }
+      }
+    },
+    {
+      "name": "Editar labor (ajustar id)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/labores/{{laborId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"loteId\": 2, \"tipo\": \"RIEGO\", \"fecha\": \"2026-10-28\", \"responsable\": \"Prueba Postman\", \"cantidad\": 2, \"observacion\": \"Demostracion\"}"
+        }
+      }
+    },
+    {
+      "name": "Eliminar con jefe (204)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/labores/{{laborId}}"
+      }
+    }
+  ]
+}

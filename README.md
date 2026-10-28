@@ -26,3 +26,29 @@ Los commits usan el reloj real. Este repositorio se inicia el 28 de octubre de
 
 La solicitud de cambio del examen requiere asignación del docente. No se
 inventa una solicitud, una evaluación, fechas anteriores ni evidencias.
+
+## Contrato y arquitectura
+
+Paquetes: `config` (seguridad y errores), `seguridad` (usuarios/matriz),
+`dominio` (entidades), `repositorio` (JPA), `servicio` (reglas/transacciones),
+`web/dto` (contrato) y `web` (HTTP). Detalles y recorrido: [guía de defensa](docs/DEFENSA.md).
+
+| Método | Ruta bajo /api/v1 | Privilegio |
+|---|---|---|
+| POST | /auth/login | Público |
+| GET | /usuarios/me | Autenticado |
+| GET | /lotes y /lotes/{id} | LOTE_LEER |
+| GET | /lotes/{id}/labores | LABOR_LEER |
+| POST | /labores | LABOR_CREAR |
+| PUT | /labores/{id} | LABOR_EDITAR |
+| DELETE | /labores/{id} | LABOR_ELIMINAR |
+| POST | /lotes/{id}/cerrar-campania | CAMPANIA_CERRAR |
+
+Listados: `pagina`, `tamanio`; lotes también `valle`, `campaniaCerrada`.
+Login: `{ "usuario": "tecnico1", "password": "Agro2026*" }`.
+Los tres usuarios semilla son `tecnico1`, `jefe1` y `admin`, con la misma clave.
+Técnico lee/crea y edita propias en 24 h; jefe lee/crea/edita/elimina/cierra;
+administrador lee y posee USUARIO_GESTIONAR. La firma JWT se verifica en Spring
+Security; los privilegios se verifican en el servicio.
+
+Pruebas: `./gradlew.bat build`. Colección: `docs/AgroAPI.postman_collection.json`.
