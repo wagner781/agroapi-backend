@@ -52,8 +52,9 @@ class CampoService(private val lotes: LoteRepository, private val labores: Labor
             "${u.id}:$it"
         }
         idempotencia?.let { labores.findByClaveCliente(it)?.let { anterior ->
-            if(anterior.loteId!=p.loteId || anterior.tipo!=p.tipo || anterior.fecha!=p.fecha || anterior.cantidad!=p.cantidad || anterior.responsable!=p.responsable || anterior.observacion!=p.observacion)
-                throw FalloApi(409,"La clave ya identifica otra peticion")
+            if(anterior.loteId!=p.loteId) throw FalloApi(409,"La clave ya identifica otro lote")
+            // Replay del POST original. El cliente compara el resultado y envía PUT si
+            // corrigió la fila provisional tras perder la primera respuesta.
             return anterior.dto()
         } }
         validar(lote,p)
